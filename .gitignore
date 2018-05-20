@@ -1,0 +1,7 @@
+build*
+
+*.obj
+*.o
+
+*.sublime-workspace
+*.sublime-project
