@@ -20,7 +20,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <cmast/cmast.hpp>
-
-#include <cmMakefile.h>
-#include <cmState.h>
-#include <cmStateSnapshot.h>

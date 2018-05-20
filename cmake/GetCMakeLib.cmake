@@ -130,7 +130,48 @@ function(build_cmake TARGET_FILE_OUT WORKING_DIRECTORY EP_SOURCE_DIR BUILD_DIR)
   endif()
 endfunction()
 
-function(make_cmakelib_imported_target TARGET_NAME EP_SOURCE_DIR BUILD_DIR CMAKELIB_ARCHIVE_FILE)
+function(cmakelib_imported_target_deps_targets TARGET_NAME TARGET_FILE_EXTRA)
+  file(STRINGS "${TARGET_FILE_EXTRA}" dependencies)
+  file(STRINGS "${TARGET_FILE_EXTRA}-names" names)
+
+  list(LENGTH names length)
+  math(EXPR length "${length} - 1")
+
+  foreach(index RANGE ${length})
+    list(GET names ${index} name)
+    list(GET dependencies ${index} dep)
+
+    string(STRIP "${name}" name)
+    string(STRIP "${dep}" dep)
+
+    add_library(CMakeLib_${name} STATIC IMPORTED)
+    set_target_properties(CMakeLib_${name}
+      PROPERTIES
+        IMPORTED_LOCATION "${dep}"
+    )
+    
+    target_link_libraries(${TARGET_NAME}
+      INTERFACE CMakeLib_${name}
+    )
+  endforeach()
+endfunction()
+
+function(cmakelib_imported_target_deps_nontargets TARGET_NAME TARGET_FILE_EXTRA)
+  file(STRINGS "${TARGET_FILE_EXTRA}-nontargets" nontargets)
+
+  target_link_libraries(${TARGET_NAME}
+    INTERFACE ${nontargets}
+  )
+endfunction()
+
+function(cmakelib_imported_target_deps TARGET_NAME TARGET_FILE_EXTRA)
+  cmakelib_imported_target_deps_targets(${TARGET_NAME} "${TARGET_FILE_EXTRA}")
+  cmakelib_imported_target_deps_nontargets(${TARGET_NAME} "${TARGET_FILE_EXTRA}")
+endfunction()
+
+function(make_cmakelib_imported_target TARGET_NAME WORKING_DIRECTORY EP_SOURCE_DIR BUILD_DIR CMAKELIB_ARCHIVE_FILE)
+  set(TARGET_FILE_EXTRA "${WORKING_DIRECTORY}/target-file-extra")
+
   add_library(${TARGET_NAME} STATIC IMPORTED)
   target_include_directories(${TARGET_NAME}
     INTERFACE
@@ -144,6 +185,8 @@ function(make_cmakelib_imported_target TARGET_NAME EP_SOURCE_DIR BUILD_DIR CMAKE
     PROPERTIES
       IMPORTED_LOCATION "${CMAKELIB_ARCHIVE_FILE}"
   )
+
+  cmakelib_imported_target_deps(${TARGET_NAME} ${TARGET_FILE_EXTRA})
 endfunction()
 
 function(get_cmake TARGET_NAME)
@@ -157,5 +200,5 @@ function(get_cmake TARGET_NAME)
   set(BUILD_DIR "${WORKING_DIRECTORY}/build-dir")
   build_cmake(CMAKELIB_ARCHIVE_FILE "${WORKING_DIRECTORY}" "${EP_SOURCE_DIR}" "${BUILD_DIR}")
 
-  make_cmakelib_imported_target(${TARGET_NAME} "${EP_SOURCE_DIR}" "${BUILD_DIR}" "${CMAKELIB_ARCHIVE_FILE}")
+  make_cmakelib_imported_target(${TARGET_NAME} "${WORKING_DIRECTORY}" "${EP_SOURCE_DIR}" "${BUILD_DIR}" "${CMAKELIB_ARCHIVE_FILE}")
 endfunction()

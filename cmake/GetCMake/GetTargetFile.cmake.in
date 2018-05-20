@@ -11,3 +11,67 @@ file(GENERATE
   OUTPUT @TARGET_FILE@
   CONTENT $<TARGET_FILE:CMakeLib>
 )
+
+function(_compute_lib_deps_impl TARGET NAMES FILES NONTARGETS)
+  get_target_property(libs ${TARGET} LINK_LIBRARIES)
+
+  if(NOT libs)
+    return()
+  endif()
+
+  set(_names)
+  set(_files)
+  set(_nontargets)
+
+  foreach(lib ${libs})
+    if(TARGET ${lib})
+      list(APPEND _files "$<TARGET_FILE:${lib}>")
+      list(APPEND _names "${lib}")
+
+      _compute_lib_deps_impl(${lib} lib_names lib_files lib_nontargets)
+
+      list(APPEND _files ${lib_files})
+      list(APPEND _names ${lib_names})
+      list(APPEND _nontargets ${lib_nontargets})
+    else()
+      list(APPEND _nontargets "${lib}")
+    endif()
+  endforeach()
+
+  set(${NAMES} ${_names} PARENT_SCOPE)
+  set(${FILES} ${_files} PARENT_SCOPE)
+  set(${NONTARGETS} ${_nontargets} PARENT_SCOPE)
+endfunction()
+
+
+function(compute_lib_deps TARGET NAMES FILES NONTARGETS)
+  _compute_lib_deps_impl(${TARGET} _names _files _nontargets)
+
+  list(REMOVE_DUPLICATES _names)
+  list(REMOVE_DUPLICATES _files)
+  list(REMOVE_DUPLICATES _nontargets)
+
+  set(${NAMES} ${_names} PARENT_SCOPE)
+  set(${FILES} ${_files} PARENT_SCOPE)
+  set(${NONTARGETS} ${_nontargets} PARENT_SCOPE)
+endfunction()
+
+compute_lib_deps(CMakeLib libnames libtext libnontargets)
+
+file(GENERATE
+  OUTPUT @TARGET_FILE@-extra-names
+  CONTENT "$<JOIN:${libnames},
+>"
+)
+
+file(GENERATE
+  OUTPUT @TARGET_FILE@-extra
+  CONTENT "$<JOIN:${libtext},
+>"
+)
+
+file(GENERATE
+  OUTPUT @TARGET_FILE@-extra-nontargets
+  CONTENT "$<JOIN:${libnontargets},
+>"
+)
