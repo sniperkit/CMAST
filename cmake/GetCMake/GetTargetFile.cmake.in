@@ -12,6 +12,7 @@ file(GENERATE
   CONTENT $<TARGET_FILE:CMakeLib>
 )
 
+# Computes all the link dependencies of the specified target
 function(_compute_lib_deps_impl TARGET NAMES FILES NONTARGETS)
   get_target_property(libs ${TARGET} LINK_LIBRARIES)
 
@@ -43,7 +44,7 @@ function(_compute_lib_deps_impl TARGET NAMES FILES NONTARGETS)
   set(${NONTARGETS} ${_nontargets} PARENT_SCOPE)
 endfunction()
 
-
+# Computes the link dependencies of the specified target. Duplicates are removed.
 function(compute_lib_deps TARGET NAMES FILES NONTARGETS)
   _compute_lib_deps_impl(${TARGET} _names _files _nontargets)
 

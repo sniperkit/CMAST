@@ -1,5 +1,15 @@
-
-
+# Executes cmake's configure step on the current directory `.` (this does an in-source build)
+# Certain cmake arguments are settable as parameters. E.g.:
+# 
+#     _execute_cmake(CMAKE_BUILD_TYPE Debug)
+# 
+# When not explicitly specified, these variables are set to the current values
+# in the currently executing environment (so `CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}`
+# is redundant). If you wish to not use the specific argument, pass in the
+# NO_CMAKE_BUILD_TYPE argument and it will not be passed in to the cmake executable.
+# 
+# Note that this is specifically for this file, so BUILD_TESTING and BUILD_SHARED_LIBS
+# are both OFF, unsettable by the user.
 function(_execute_cmake)
   set(options
     NO_CMAKE_GENERATOR
@@ -38,7 +48,6 @@ function(_execute_cmake)
 
   macro(compute_defs)
     foreach(NAME ${ARGV})
-      # BUGGG: BUILD_TESTING OFF. OFF is considered false!
       if(NOT ARG_NO_${NAME})
         if(DEFINED ARG_${NAME})
           set(CMD_${NAME} "-D${NAME}=${ARG_${NAME}}")
@@ -79,6 +88,7 @@ function(_execute_cmake)
   set("${ARG_RESULT_VARIABLE}" "${result}" PARENT_SCOPE)
 endfunction()
 
+# Sets up the CMakeLists.txt responsible for downloading CMake
 function(setup_cmake_external_project_file WORKING_DIRECTORY EP_SOURCE_DIR_FILE)
   # Note: EP_SOURCE_DIR_FILE is referenced in ep.cmake.in
   configure_file(
@@ -87,6 +97,7 @@ function(setup_cmake_external_project_file WORKING_DIRECTORY EP_SOURCE_DIR_FILE)
     @ONLY)
 endfunction()
 
+# Actually downloads CMake
 function(download_cmake WORKING_DIRECTORY)
   _execute_cmake(
     RESULT_VARIABLE download-failed
@@ -98,6 +109,14 @@ function(download_cmake WORKING_DIRECTORY)
   endif()
 endfunction()
 
+# Builds CMake
+# returns the path of libCMakeLib.a in TARGET_FILE_OUT
+# 
+# Certain extra files are created under ${WORKING_DIRECTORY}:
+# * target-file (for computing the result of TARGET_FILE_OUT)
+# * target-file-extra (extra dependencies on targets)
+# * target-file-extra-names (the names of said dependencies)
+# * target-file-extra-nontargets (link dependencies which are not targets)
 function(build_cmake TARGET_FILE_OUT WORKING_DIRECTORY EP_SOURCE_DIR BUILD_DIR)
   set(CMAKE_SUBDIRECTORY "${EP_SOURCE_DIR}")
   set(TARGET_FILE "${WORKING_DIRECTORY}/target-file")
@@ -130,6 +149,7 @@ function(build_cmake TARGET_FILE_OUT WORKING_DIRECTORY EP_SOURCE_DIR BUILD_DIR)
   endif()
 endfunction()
 
+# Adds dependencies to target link dependencies
 function(cmakelib_imported_target_deps_targets TARGET_NAME TARGET_FILE_EXTRA)
   file(STRINGS "${TARGET_FILE_EXTRA}" dependencies)
   file(STRINGS "${TARGET_FILE_EXTRA}-names" names)
@@ -156,6 +176,7 @@ function(cmakelib_imported_target_deps_targets TARGET_NAME TARGET_FILE_EXTRA)
   endforeach()
 endfunction()
 
+# Adds dependencies to non-target link dependencies
 function(cmakelib_imported_target_deps_nontargets TARGET_NAME TARGET_FILE_EXTRA)
   file(STRINGS "${TARGET_FILE_EXTRA}-nontargets" nontargets)
 
@@ -164,11 +185,14 @@ function(cmakelib_imported_target_deps_nontargets TARGET_NAME TARGET_FILE_EXTRA)
   )
 endfunction()
 
+# Adds the link dependencies of CMakeLib
 function(cmakelib_imported_target_deps TARGET_NAME TARGET_FILE_EXTRA)
   cmakelib_imported_target_deps_targets(${TARGET_NAME} "${TARGET_FILE_EXTRA}")
   cmakelib_imported_target_deps_nontargets(${TARGET_NAME} "${TARGET_FILE_EXTRA}")
 endfunction()
 
+# Creates the CMakeLib target
+# Include directories and link dependencies are set up appropriately
 function(make_cmakelib_imported_target TARGET_NAME WORKING_DIRECTORY EP_SOURCE_DIR BUILD_DIR CMAKELIB_ARCHIVE_FILE)
   set(TARGET_FILE_EXTRA "${WORKING_DIRECTORY}/target-file-extra")
 
@@ -189,7 +213,10 @@ function(make_cmakelib_imported_target TARGET_NAME WORKING_DIRECTORY EP_SOURCE_D
   cmakelib_imported_target_deps(${TARGET_NAME} ${TARGET_FILE_EXTRA})
 endfunction()
 
-function(get_cmake TARGET_NAME)
+# Obtains CMakeLib
+# Downloads CMake, and sets up a target TARGET_NAME which can be used to specify
+# a dependency on CMakeLib via target_link_libraries
+function(add_cmake_library TARGET_NAME)
   set(WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/get-cmake")
   set(EP_SOURCE_DIR_FILE "${WORKING_DIRECTORY}/ep-source-dir")
 

@@ -14,7 +14,8 @@ option(CMAST_BUILD_TESTING "Build Testing option for cmast. Defaults to BUILD_TE
 
 find_package(Boost 1.67.0 REQUIRED)
 
-get_cmake(CMakeLib)
+# Creates the CMakeLib target
+add_cmake_library(CMakeLib)
 
 add_library(cmast
   src/cmast.cpp
