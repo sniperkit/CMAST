@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.8)
+
+project(get-cmake NONE)
+
+include(ExternalProject)
+
+ExternalProject_Add(get-cmake
+  GIT_REPOSITORY https://gitlab.kitware.com/cmake/cmake.git
+  CMAKE_ARGS -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTING=OFF
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND ""
+  TEST_COMMAND ""
+)
+
+ExternalProject_Get_Property(get-cmake SOURCE_DIR)
+
+file(WRITE @EP_SOURCE_DIR_FILE@ "${SOURCE_DIR}")

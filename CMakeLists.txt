@@ -8,35 +8,13 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 project(cmast VERSION 0.1.0 LANGUAGES CXX)
 
 include(CTest)
+include(GetCMakeLib)
 
 option(CMAST_BUILD_TESTING "Build Testing option for cmast. Defaults to BUILD_TESTING" "${BUILD_TESTING}")
 
 find_package(Boost 1.67.0 REQUIRED)
 
-function(add_cmake_lib)
-  set(BUILD_TESTING OFF)
-  set(BUILD_SHARED_LIBS OFF)
-
-  add_subdirectory(submodules/cmake)
-
-  add_library(_cmast_cmake_lib STATIC IMPORTED)
-  # add_dependencies(_cmast_cmake_lib CMakeLib)
-  target_include_directories(_cmast_cmake_lib
-    INTERFACE submodules/cmake/Source
-  )
-  target_link_libraries(_cmast_cmake_lib
-    INTERFACE CMakeLib
-  )
-
-  # set_target_properties(_cmast_cmake_lib
-  #   PROPERTIES
-  #     IMPORTED_LOCATION "$<TARGET_FILE:CMakeLib>"
-  #     # INTERFACE_INCLUDE_DIRECTORIES submodules/cmake/Source
-  # )
-endfunction()
-
-add_cmake_lib()
-file(COPY "${CMAKE_CURRENT_LIST_DIR}/cmake/CTestCustom.cmake" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+get_cmake(CMakeLib)
 
 add_library(cmast
   src/cmast.cpp
@@ -59,7 +37,7 @@ target_link_libraries(cmast
   PUBLIC
     Boost::boost
   PRIVATE
-    _cmast_cmake_lib
+    CMakeLib
 )
 
 target_compile_features(cmast

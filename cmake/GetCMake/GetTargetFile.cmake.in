@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.8)
+
+project(get-cmakelib-target-file)
+
+add_subdirectory(
+  @CMAKE_SUBDIRECTORY@
+  @BUILD_DIR@
+)
+
+file(GENERATE
+  OUTPUT @TARGET_FILE@
+  CONTENT $<TARGET_FILE:CMakeLib>
+)
