@@ -1,5 +1,5 @@
-# cmast
+# CMAST
 
-cmast provides an Abstract Syntax Tree for CMake code.
+CMAST provides an Abstract Syntax Tree for CMake code.
 
-(cm)ake (ast)
+(CM)ake (AST)

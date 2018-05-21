@@ -1,21 +1,40 @@
+#[[
+This file is part of CMAST
+
+Copyright (C) 2018  Justin Bassett
+
+CMAST is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+CMAST is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+]]
+
 find_package(Catch2 2.0 REQUIRED)
 
-add_executable(test_cmast
+add_executable(TestCMAST
   test_main.cpp
   parser/test.cpp
   parser/test_lexer.comments.cpp
   parser/test_lexer.identifier.cpp
 )
 
-target_include_directories(test_cmast
+target_include_directories(TestCMAST
   PRIVATE
-    $<TARGET_PROPERTY:cmast,INCLUDE_DIRECTORIES>
+    $<TARGET_PROPERTY:CMAST,INCLUDE_DIRECTORIES>
 )
 
-target_link_libraries(test_cmast
+target_link_libraries(TestCMAST
   PRIVATE
-    CMAST::cmast
+    CMAST::CMAST
     Catch2::Catch
 )
 
-add_test(unit_tests test_cmast)
+add_test(TestCMAST TestCMAST)
