@@ -1,0 +1,56 @@
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: false
+      compiler: clang
+      env: CC=clang-5.0 CXX=clang++-5.0
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - g++-7 # Gets newer version of libstdc++
+            - clang-5.0
+            - ninja-build
+    - os: linux
+      dist: trusty
+      sudo: false
+      compiler: gcc
+      env: CC=gcc-7 CXX=g++-7
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - g++-7
+            - ninja-build
+    - os: osx
+      osx_image: xcode8.3
+      compiler: clang
+      env: CC=clang CXX=clang++
+
+install:
+  - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+  - mkdir -p ${DEPS_DIR} && pushd ${DEPS_DIR}
+    # Install CMake
+  - |
+    CMAKE_URL="https://cmake.org/files/v3.8/cmake-3.8.2-Linux-x86_64.tar.gz"
+    mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
+    export PATH=${DEPS_DIR}/cmake/bin:${PATH}
+  - popd
+    # Install conan
+  - pip install conan
+    # Install conan dependencies
+  - mkdir build && pushd build
+  - conan install ../.ci
+
+script:
+  - cd "${TRAVIS_BUILD_DIR}/build"
+  - cmake -G Ninja .. -DCMAKE_TOOLCHAIN_FILE=../.ci/toolchain.cmake
+  - ninja -v
+  - ctest -V
