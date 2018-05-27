@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # Executes cmake's configure step on the current directory `.` (this does an in-source build)
 # Certain cmake arguments are settable as parameters. E.g.:
 # 
-#     _execute_cmake(CMAKE_BUILD_TYPE Debug)
+#     gcl_execute_cmake(CMAKE_BUILD_TYPE Debug)
 # 
 # When not explicitly specified, these variables are set to the current values
 # in the currently executing environment (so `CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE}`
@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # 
 # Note that this is specifically for this file, so BUILD_TESTING and BUILD_SHARED_LIBS
 # are both OFF, unsettable by the user.
-function(_execute_cmake)
+function(gcl_execute_cmake)
   set(options
     NO_CMAKE_GENERATOR
     NO_CMAKE_BUILD_TYPE
@@ -118,12 +118,18 @@ endfunction()
 
 # Actually downloads CMake
 function(download_cmake WORKING_DIRECTORY)
-  _execute_cmake(
+  gcl_execute_cmake(
     RESULT_VARIABLE download-failed
     WORKING_DIRECTORY "${WORKING_DIRECTORY}"
   )
 
-  if(download-failed)
+  execute_process(
+    COMMAND ${CMAKE_COMMAND} --build .
+    RESULT_VARIABLE download-failed2
+    WORKING_DIRECTORY "${WORKING_DIRECTORY}"
+  )
+
+  if(download-failed OR download-failed2)
     message(FATAL_ERROR "Failed to download CMake")
   endif()
 endfunction()
@@ -145,7 +151,7 @@ function(build_cmake TARGET_FILE_OUT WORKING_DIRECTORY EP_SOURCE_DIR BUILD_DIR)
     "${WORKING_DIRECTORY}/get-target-file/CMakeLists.txt"
     @ONLY)
 
-  _execute_cmake(
+  gcl_execute_cmake(
     RESULT_VARIABLE get-target-file-failed
     WORKING_DIRECTORY "${WORKING_DIRECTORY}/get-target-file"
   )
@@ -158,7 +164,7 @@ function(build_cmake TARGET_FILE_OUT WORKING_DIRECTORY EP_SOURCE_DIR BUILD_DIR)
   set(${TARGET_FILE_OUT} "${RESULT}" PARENT_SCOPE)
 
   execute_process(
-    COMMAND ${CMAKE_COMMAND} --build .
+    COMMAND ${CMAKE_COMMAND} --build . --target CMakeLib
     RESULT_VARIABLE build-failed
     WORKING_DIRECTORY "${WORKING_DIRECTORY}/get-target-file"
   )

@@ -38,9 +38,17 @@ add_cmake_library(CMakeLib)
 
 add_library(CMAST
   src/cmast.cpp
-  src/parser/lexer.cpp
-  src/parser/lexer/comments.cpp
-  src/parser/lexer/identifiers.cpp
+
+  src/ast/FunctionArgument.cpp
+  src/ast/FunctionCall.cpp
+  src/ast/ListFile.cpp
+  src/ast/SourceInfo.cpp
+
+  src/parser/convert_function_argument.cpp
+  src/parser/convert_function_call.cpp
+  src/parser/convert_list_file.cpp
+  src/parser/convert_source_info.cpp
+  src/parser/parse_list_file.cpp
 )
 
 add_library(CMAST::CMAST ALIAS CMAST)
@@ -53,6 +61,7 @@ target_include_directories(CMAST
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
+# Note: to build with libstdc++, you also have to add -lstdc++fs to the link commands in your toolchain file
 target_link_libraries(CMAST
   PUBLIC
     Boost::boost

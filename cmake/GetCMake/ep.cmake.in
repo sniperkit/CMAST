@@ -26,7 +26,6 @@ include(ExternalProject)
 ExternalProject_Add(get-cmake
   GIT_REPOSITORY https://gitlab.kitware.com/cmake/cmake.git
   CMAKE_ARGS -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTING=OFF
-  CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
   TEST_COMMAND ""

@@ -21,9 +21,11 @@ find_package(Catch2 2.0 REQUIRED)
 
 add_executable(TestCMAST
   test_main.cpp
-  parser/test.cpp
-  parser/test_lexer.comments.cpp
-  parser/test_lexer.identifier.cpp
+
+  parser/test.convert_function_argument.cpp
+  parser/test.convert_function_call.cpp
+  parser/test.convert_source_info.cpp
+  parser/test.parse_list_file.cpp
 )
 
 target_include_directories(TestCMAST
