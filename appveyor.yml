@@ -1,0 +1,21 @@
+image: Visual Studio 2017
+
+shallow_clone: true
+
+cache: C:/tools/vcpkg/installed/
+
+install:
+  # Note: boost is already installed by default.
+  - vcpkg install catch2
+
+before_build:
+  - mkdir build
+  - cd build
+  - cmake ..
+      -DCMAKE_TOOLCHAIN_FILE=../.ci/msvc.toolchain.cmake
+
+build_script:
+  - cmake --build .
+
+test_script:
+  - ctest -V
