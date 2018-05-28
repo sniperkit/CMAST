@@ -13,21 +13,21 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
           packages:
-            - g++-7 # Gets newer version of libstdc++
+            - g++-8 # Gets newer version of libstdc++
             - clang-5.0
             - ninja-build
     - os: linux
       dist: trusty
       sudo: false
       compiler: gcc
-      env: CC=gcc-7 CXX=g++-7 PIP=pip
+      env: CC=gcc-8 CXX=g++-8 PIP=pip
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
           packages:
-            - g++-7
+            - g++-8
             - ninja-build
     - os: osx
       osx_image: xcode9.3
@@ -50,6 +50,6 @@ install:
 
 script:
   - cd "${TRAVIS_BUILD_DIR}/build"
-  - cmake -G Ninja .. -DCMAKE_TOOLCHAIN_FILE=../.ci/toolchain.cmake
+  - cmake -G Ninja .. -DCMAKE_TOOLCHAIN_FILE="${TRAVIS_BUILD_DIR}/.ci/toolchain.cmake"
   - ninja -v
   - ctest -V
