@@ -1,4 +1,5 @@
-#[[
+/*
+
 This file is part of CMAST
 
 Copyright (C) 2018  Justin Bassett
@@ -15,28 +16,30 @@ GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-]]
 
-find_package(Catch2 2.0 REQUIRED)
+*/
 
-add_executable(TestCMAST
-  test_main.cpp
+#pragma once
 
-  ast/level1/test.argument.parse.cpp
-  ast/level1/test.identifier.parse.cpp
-  ast/level1/test.unquoted_argument.parse.cpp
-  ast/level1/test.escape_sequence.parse.cpp
-)
+#include <variant>
 
-target_include_directories(TestCMAST
-  PRIVATE
-    $<TARGET_PROPERTY:CMAST,INCLUDE_DIRECTORIES>
-)
+#include <cmast/ast/level1/bracket_argument.hpp>
+#include <cmast/ast/level1/quoted_argument.hpp>
+#include <cmast/ast/level1/unquoted_argument.hpp>
 
-target_link_libraries(TestCMAST
-  PRIVATE
-    CMAST::CMAST
-    Catch2::Catch
-)
+namespace cmast::level1 {
+    class argument {
+        using variant_type = std::variant<bracket_argument, quoted_argument,
+            unquoted_argument>;
 
-add_test(TestCMAST TestCMAST)
+    public:
+        argument() = default;
+
+        explicit argument(variant_type value);
+
+        auto value() const -> variant_type const&;
+
+    private:
+        variant_type value_;
+    };
+}

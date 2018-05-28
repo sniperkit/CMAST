@@ -33,9 +33,6 @@ option(CMAST_BUILD_TESTING "Build Testing option for CMAST. Defaults to BUILD_TE
 
 find_package(Boost 1.67.0 REQUIRED)
 
-# Creates the CMakeLib target
-add_cmake_library(CMakeLib)
-
 add_library(CMAST
   src/cmast.cpp
 
@@ -44,11 +41,16 @@ add_library(CMAST
   src/ast/ListFile.cpp
   src/ast/SourceInfo.cpp
 
-  src/parser/convert_function_argument.cpp
-  src/parser/convert_function_call.cpp
-  src/parser/convert_list_file.cpp
-  src/parser/convert_source_info.cpp
-  src/parser/parse_list_file.cpp
+  src/ast/level1/argument.cpp
+  src/ast/level1/bracket_argument.cpp
+  src/ast/level1/command_invocation.cpp
+  src/ast/level1/comment.cpp
+  src/ast/level1/file.cpp
+  src/ast/level1/file_element.cpp
+  src/ast/level1/identifier.cpp
+  src/ast/level1/identifier.parse.cpp
+  src/ast/level1/quoted_argument.cpp
+  src/ast/level1/unquoted_argument.cpp
 )
 
 add_library(CMAST::CMAST ALIAS CMAST)
@@ -65,8 +67,6 @@ target_include_directories(CMAST
 target_link_libraries(CMAST
   PUBLIC
     Boost::boost
-  PRIVATE
-    CMakeLib
 )
 
 target_compile_features(CMAST

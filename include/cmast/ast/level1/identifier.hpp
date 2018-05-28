@@ -1,4 +1,5 @@
-#[[
+/*
+
 This file is part of CMAST
 
 Copyright (C) 2018  Justin Bassett
@@ -15,28 +16,15 @@ GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-]]
 
-find_package(Catch2 2.0 REQUIRED)
+*/
 
-add_executable(TestCMAST
-  test_main.cpp
+#pragma once
 
-  ast/level1/test.argument.parse.cpp
-  ast/level1/test.identifier.parse.cpp
-  ast/level1/test.unquoted_argument.parse.cpp
-  ast/level1/test.escape_sequence.parse.cpp
-)
+#include <string>
 
-target_include_directories(TestCMAST
-  PRIVATE
-    $<TARGET_PROPERTY:CMAST,INCLUDE_DIRECTORIES>
-)
-
-target_link_libraries(TestCMAST
-  PRIVATE
-    CMAST::CMAST
-    Catch2::Catch
-)
-
-add_test(TestCMAST TestCMAST)
+namespace cmast::level1 {
+    struct identifier {
+        std::string value;
+    };
+}

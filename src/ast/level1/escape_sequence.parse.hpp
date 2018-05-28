@@ -1,4 +1,5 @@
-#[[
+/*
+
 This file is part of CMAST
 
 Copyright (C) 2018  Justin Bassett
@@ -15,28 +16,26 @@ GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-]]
 
-find_package(Catch2 2.0 REQUIRED)
+*/
 
-add_executable(TestCMAST
-  test_main.cpp
+#pragma once
 
-  ast/level1/test.argument.parse.cpp
-  ast/level1/test.identifier.parse.cpp
-  ast/level1/test.unquoted_argument.parse.cpp
-  ast/level1/test.escape_sequence.parse.cpp
-)
+#include <string>
 
-target_include_directories(TestCMAST
-  PRIVATE
-    $<TARGET_PROPERTY:CMAST,INCLUDE_DIRECTORIES>
-)
+#include "parser/level1.hpp"
+#include "parser/spirit_x3.hpp"
 
-target_link_libraries(TestCMAST
-  PRIVATE
-    CMAST::CMAST
-    Catch2::Catch
-)
+namespace cmast::detail::level1 {
+    inline auto const escape_identity
+        = x3::lexeme[x3::lit('\\') >> (x3::char_ - x3::char_("A-Za-z0-9;"))];
 
-add_test(TestCMAST TestCMAST)
+    inline auto const escape_encoded = (x3::lit("\\t") >> x3::attr('\t'))
+        | (x3::lit("\\r") >> x3::attr('\r'))
+        | (x3::lit("\\n") >> x3::attr('\n'));
+
+    inline auto const escape_semicolon = x3::lit('\\') >> x3::char_(';');
+
+    inline auto const escape_sequence
+        = escape_identity | escape_encoded | escape_semicolon;
+}

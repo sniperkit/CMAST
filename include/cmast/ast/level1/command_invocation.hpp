@@ -1,4 +1,5 @@
-#[[
+/*
+
 This file is part of CMAST
 
 Copyright (C) 2018  Justin Bassett
@@ -15,28 +16,30 @@ GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-]]
 
-find_package(Catch2 2.0 REQUIRED)
+*/
 
-add_executable(TestCMAST
-  test_main.cpp
+#pragma once
 
-  ast/level1/test.argument.parse.cpp
-  ast/level1/test.identifier.parse.cpp
-  ast/level1/test.unquoted_argument.parse.cpp
-  ast/level1/test.escape_sequence.parse.cpp
-)
+#include <string>
+#include <vector>
 
-target_include_directories(TestCMAST
-  PRIVATE
-    $<TARGET_PROPERTY:CMAST,INCLUDE_DIRECTORIES>
-)
+#include <cmast/ast/level1/argument.hpp>
 
-target_link_libraries(TestCMAST
-  PRIVATE
-    CMAST::CMAST
-    Catch2::Catch
-)
+namespace cmast::level1 {
+    class command_invocation {
+    public:
+        command_invocation() = default;
 
-add_test(TestCMAST TestCMAST)
+        explicit command_invocation(
+            std::string name, std::vector<argument> arguments);
+
+        auto name() const -> std::string const&;
+
+        auto arguments() const -> std::vector<argument> const&;
+
+    private:
+        std::string name_;
+        std::vector<argument> arguments_;
+    };
+}
