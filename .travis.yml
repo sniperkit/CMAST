@@ -24,7 +24,6 @@ matrix:
       env: SETUP_COMPILER_ENV="CC=gcc-8 CXX=g++-8"
            PIP=pip
            TOOLCHAIN="$TRAVIS_BUILD_DIR/.ci/gcc.toolchain.cmake"
-           FIX_CONAN="$TRAVIS_BUILD_DIR/.ci/allow-gcc-8-conan.sh"
       addons:
         apt:
           sources:
@@ -55,8 +54,10 @@ install:
     # Install conan
   - $PIP install conan --user
     # Fix conan settings to allow for gcc-8
-  - if [[ -z ${FIX_CONAN+x} ]]; then bash $FIX_CONAN ; fi
-  - cat ~/.conan/settings.yml
+  - pushd "$TRAVIS_BUILD_DIR/.ci"
+  - zip settings.zip settings.yml
+  - conan config install settings.zip
+  - popd
     # Install conan dependencies
   - mkdir build && pushd build
   - conan install ../.ci
