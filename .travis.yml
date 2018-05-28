@@ -55,8 +55,6 @@ install:
   - $PIP install conan --user
     # Install conan dependencies
   - mkdir build && pushd build
-  - conan remote add conan-community https://api.bintray.com/conan/conan-community/conan 
-  - conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan 
   - conan install ../.ci
 
 script:
