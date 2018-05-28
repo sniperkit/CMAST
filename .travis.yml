@@ -62,8 +62,6 @@ install:
 script:
   - cd "${TRAVIS_BUILD_DIR}/build"
   - cmake ..  -DCMAKE_VERBOSE_MAKEFILE=ON
-              -DCMAKE_CXX_COMPILER=$CXX
-              -DCMAKE_CC_COMPILER=$CC
-              -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN
+              -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN"
   - cmake --build . -- -j3
   - ctest -V
