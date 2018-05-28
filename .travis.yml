@@ -54,11 +54,12 @@ install:
   - popd
     # Install conan
   - $PIP install conan --user
+    # Fix conan settings to allow for gcc-8
+  - if [[ -z ${FIX_CONAN+x} ]]; then bash $FIX_CONAN ; fi
+  - cat ~/.conan/settings.yml
     # Install conan dependencies
   - mkdir build && pushd build
   - conan install ../.ci
-  - if [[ -z ${FIX_CONAN+x} ]]; then bash $FIX_CONAN ; fi
-  - cat ~/.conan/settings.yml
 
 script:
   - cd "${TRAVIS_BUILD_DIR}/build"
