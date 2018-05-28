@@ -9,7 +9,7 @@ matrix:
       env: CC=clang-5.0
            CXX=clang++-5.0
            PIP=pip
-           TOOLCHAIN="${TRAVIS_BUILD_DIR}/.ci/clang.toolchain.cmake"
+           TOOLCHAIN="$TRAVIS_BUILD_DIR/.ci/clang.toolchain.cmake"
       addons:
         apt:
           sources:
@@ -25,7 +25,7 @@ matrix:
       env: CC=gcc-8
            CXX=g++-8
            PIP=pip
-           TOOLCHAIN="${TRAVIS_BUILD_DIR}/.ci/gcc.toolchain.cmake"
+           TOOLCHAIN="$TRAVIS_BUILD_DIR/.ci/gcc.toolchain.cmake"
       addons:
         apt:
           sources:
@@ -39,10 +39,11 @@ matrix:
       env: CC=clang
            CXX=clang++
            PIP=pip3
-           TOOLCHAIN="${TRAVIS_BUILD_DIR}/.ci/osx.clang.toolchain.cmake"
+           TOOLCHAIN="$TRAVIS_BUILD_DIR/.ci/osx.clang.toolchain.cmake"
            PATH="/Users/travis/Library/Python/3.6/bin:/usr/local/opt/make/libexec/gnubin:${PATH}"
 
 install:
+  - echo $TOOLCHAIN
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install make ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew upgrade python ; fi
