@@ -5,7 +5,7 @@ set(CMAKE_BUILD_TYPE Debug)
 add_compile_options(
   /W4
   # Warnings as error for CI builds
-  /Wx
+  /WX
 )
 
 include("C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake")
