@@ -32,7 +32,7 @@ matrix:
     - os: osx
       osx_image: xcode9.3
       compiler: clang
-      env: CC=clang CXX=clang++ PIP=pip3
+      env: CC=clang CXX=clang++ PIP=pip3 PATH="/Users/travis/Library/Python/3.6/bin:${PATH}"
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew upgrade python ; fi
