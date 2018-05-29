@@ -8,7 +8,7 @@ matrix:
       compiler: clang
       env: SETUP_COMPILER_ENV="CC=clang-5.0 CXX=clang++-5.0"
            PIP=pip
-           TOOLCHAIN=".ci/clang.toolchain.cmake"
+           TOOLCHAIN=clang
       addons:
         apt:
           sources:
@@ -23,7 +23,7 @@ matrix:
       compiler: gcc
       env: SETUP_COMPILER_ENV="CC=gcc-8 CXX=g++-8"
            PIP=pip
-           TOOLCHAIN=".ci/gcc.toolchain.cmake"
+           TOOLCHAIN=gcc
       addons:
         apt:
           sources:
@@ -36,7 +36,7 @@ matrix:
       compiler: clang
       env: SETUP_COMPILER_ENV="CC=clang CXX=clang++"
            PIP=pip3
-           TOOLCHAIN=".ci/osx.clang.toolchain.cmake"
+           TOOLCHAIN=osx.clang
            PATH="/Users/travis/Library/Python/3.6/bin:/usr/local/opt/make/libexec/gnubin:${PATH}"
 
 install:
@@ -64,7 +64,8 @@ install:
 
 script:
   - cd "${TRAVIS_BUILD_DIR}/build"
-  - echo $TOOLCHAIN
-  - cmake .. -DCMAKE_VERBOSE_MAKEFILE=$VERBOSE_BUILD -DCMAKE_TOOLCHAIN_FILE="../${TOOLCHAIN}"
+  - echo $VERBOSE_BUILD
+  - echo "../.ci/$TOOLCHAIN.toolchain.cmake"
+  - cmake .. -DCMAKE_VERBOSE_MAKEFILE=$VERBOSE_BUILD -DCMAKE_TOOLCHAIN_FILE="../.ci/$TOOLCHAIN.toolchain.cmake"
   - cmake --build . -- -j3
   - ctest -V
