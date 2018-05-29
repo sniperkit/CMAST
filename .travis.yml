@@ -65,7 +65,7 @@ install:
   - conan install ../.ci
 
 script:
-  - CXXFLAS=$CMAST_CXXFLAGS
+  - CXXFLAGS=$CMAST_CXXFLAGS
   - LDFLAGS=$CMAST_LDFLAGS
   - cd "${TRAVIS_BUILD_DIR}/build"
   - cmake -DCMAKE_TOOLCHAIN_FILE="../.ci/conan.toolchain.cmake" ..

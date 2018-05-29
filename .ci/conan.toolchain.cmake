@@ -8,9 +8,9 @@ endif()
 
 set(_TOOLCHAIN_SETUP ON)
 
-if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/conanbuildinfo.cmake")
+if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   message(STATUS "Setting up Conan packages")
-  include("${CMAKE_CURRENT_LIST_DIR}/conanbuildinfo.cmake")
+  include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   conan_define_targets()
   conan_set_find_paths()
 else()
