@@ -9,6 +9,7 @@ install:
   - vcpkg install catch2
 
 before_build:
+  - set BOOST_ROOT=C:/Libraries/boost_1_67_0
   - mkdir build
   - cd build
   - cmake ..
