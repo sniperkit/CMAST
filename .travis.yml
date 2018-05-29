@@ -33,13 +33,14 @@ matrix:
           packages:
             - g++-8 # Gets newer version of libstdc++
             - clang-5.0
-    - os: osx
-      osx_image: xcode9.3
-      compiler: clang
-      env: SETUP_COMPILER_ENV="CC=clang CXX=clang++"
-           CMAST_CXXFLAGS="-Wall -Wextra -Werror"
-           PIP=pip3
-           PATH="/Users/travis/Library/Python/3.6/bin:/usr/local/opt/make/libexec/gnubin:${PATH}"
+    allow_failures:
+      - os: osx
+        osx_image: xcode9.3
+        compiler: clang
+        env: SETUP_COMPILER_ENV="CC=clang CXX=clang++"
+             CMAST_CXXFLAGS="-Wall -Wextra -Werror"
+             PIP=pip3
+             PATH="/Users/travis/Library/Python/3.6/bin:/usr/local/opt/make/libexec/gnubin:${PATH}"
 
 install:
   - eval "${SETUP_COMPILER_ENV}"

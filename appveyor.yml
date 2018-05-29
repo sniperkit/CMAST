@@ -12,11 +12,13 @@ before_build:
   - set BOOST_ROOT=C:/Libraries/boost_1_67_0
   - mkdir build
   - cd build
+    # Note: suppress C4127, which warns about if (<constant>). Spirit.X3
+    # has that.
   - cmake ..
       -DCMAKE_CXX_STANDARD=17
       -DCMAKE_CXX_EXTENSIONS=OFF
       -DCMAKE_BUILD_TYPE=Debug
-      -DCMAKE_CXX_FLAGS="/W4 /WX"
+      -DCMAKE_CXX_FLAGS="/W4 /WX /EHsc /wd4127"
       -DCMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
 
 build_script:
