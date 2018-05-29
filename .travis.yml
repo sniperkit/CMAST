@@ -69,3 +69,6 @@ script:
   - cmake .. -DCMAKE_VERBOSE_MAKEFILE=$VERBOSE_BUILD -DCMAKE_TOOLCHAIN_FILE="../.ci/$TOOLCHAIN.toolchain.cmake"
   - cmake --build . -- -j3
   - ctest -V
+
+notifications:
+  email: false
