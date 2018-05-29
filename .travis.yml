@@ -7,9 +7,9 @@ matrix:
       sudo: false
       compiler: clang
       env: SETUP_COMPILER_ENV="CC=clang-5.0 CXX=clang++-5.0"
-           LDFLAGS=-lstdc++fs
+           CMAST_LDFLAGS=-lstdc++fs
+           CMAST_CXXFLAGS="-Wall -Wextra -Werror"
            PIP=pip
-           TOOLCHAIN=clang
       addons:
         apt:
           sources:
@@ -23,9 +23,9 @@ matrix:
       sudo: false
       compiler: gcc
       env: SETUP_COMPILER_ENV="CC=gcc-8 CXX=g++-8"
-           LDFLAGS=-lstdc++fs
+           CMAST_LDFLAGS=-lstdc++fs
+           CMAST_CXXFLAGS="-Wall -Wextra -Werror"
            PIP=pip
-           TOOLCHAIN=gcc
       addons:
         apt:
           sources:
@@ -37,8 +37,8 @@ matrix:
       osx_image: xcode9.3
       compiler: clang
       env: SETUP_COMPILER_ENV="CC=clang CXX=clang++"
+           CMAST_CXXFLAGS="-Wall -Wextra -Werror"
            PIP=pip3
-           TOOLCHAIN=osx.clang
            PATH="/Users/travis/Library/Python/3.6/bin:/usr/local/opt/make/libexec/gnubin:${PATH}"
 
 install:
@@ -65,8 +65,9 @@ install:
   - conan install ../.ci
 
 script:
+  - CXXFLAS=$CMAST_CXXFLAGS
+  - LDFLAGS=$CMAST_LDFLAGS
   - cd "${TRAVIS_BUILD_DIR}/build"
-  - CXXFLAGS="-Wall -Wextra -Werror"
   - cmake -DCMAKE_TOOLCHAIN_FILE="../.ci/conan.toolchain.cmake" ..
   - cmake --build . -- -j3
   - ctest -V
