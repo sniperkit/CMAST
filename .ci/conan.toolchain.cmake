@@ -6,7 +6,6 @@ macro(find_package NAME)
   if(NOT _TOOLCHAIN_CONAN_SETUP)
     set(_TOOLCHAIN_CONAN_SETUP ON)
     include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-    conan_define_targets()
     conan_set_find_paths()
   endif()
 
