@@ -68,8 +68,7 @@ script:
   - CXXFLAS=$CMAST_CXXFLAGS
   - LDFLAGS=$CMAST_LDFLAGS
   - cd "${TRAVIS_BUILD_DIR}/build"
-  - cat ../.ci/conan.toolchain.cmake
-  - cmake -DCMAKE_TOOLCHAIN_FILE="../.ci/conan.toolchain.cmake" .. --trace
+  - cmake -DCMAKE_TOOLCHAIN_FILE="../.ci/conan.toolchain.cmake" ..
   - cmake --build . -- -j3
   - ctest -V
 
