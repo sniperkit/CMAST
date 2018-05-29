@@ -1,0 +1,76 @@
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: false
+      compiler: clang
+      env: SETUP_COMPILER_ENV="CC=clang-5.0 CXX=clang++-5.0"
+           CMAST_LDFLAGS=-lstdc++fs
+           CMAST_CXXFLAGS="-Wall -Wextra -Werror"
+           PIP=pip
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - g++-8 # Gets newer version of libstdc++
+            - clang-5.0
+    - os: linux
+      dist: trusty
+      sudo: false
+      compiler: gcc
+      env: SETUP_COMPILER_ENV="CC=gcc-8 CXX=g++-8"
+           CMAST_LDFLAGS=-lstdc++fs
+           CMAST_CXXFLAGS="-Wall -Wextra -Werror"
+           PIP=pip
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - g++-8
+    - os: osx
+      osx_image: xcode9.3
+      compiler: clang
+      env: SETUP_COMPILER_ENV="CC=clang CXX=clang++"
+           CMAST_CXXFLAGS="-Wall -Wextra -Werror"
+           PIP=pip3
+           PATH="/Users/travis/Library/Python/3.6/bin:/usr/local/opt/make/libexec/gnubin:${PATH}"
+
+install:
+  - eval "${SETUP_COMPILER_ENV}"
+  - echo ${VERBOSE_BUILD:=OFF}
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install make ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew upgrade python ; fi
+  - CMAKE_DIR="${TRAVIS_BUILD_DIR}/deps"
+  - mkdir -p ${CMAKE_DIR} && pushd ${CMAKE_DIR}
+    # Install CMake
+    # osx already has cmake, so no need to install there
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash ${TRAVIS_BUILD_DIR}/.ci/install-cmake.sh ; fi
+  - popd
+    # Install conan
+  - $PIP install conan --user
+    # Fix conan settings to allow for gcc-8
+  - pushd "$TRAVIS_BUILD_DIR/.ci"
+  - zip settings.zip settings.yml
+  - conan config install settings.zip
+  - popd
+    # Install conan dependencies
+  - mkdir build && pushd build
+  - conan install ../.ci
+
+script:
+  - CXXFLAS=$CMAST_CXXFLAGS
+  - LDFLAGS=$CMAST_LDFLAGS
+  - cd "${TRAVIS_BUILD_DIR}/build"
+  - cmake -DCMAKE_TOOLCHAIN_FILE="../.ci/conan.toolchain.cmake" ..
+  - cmake --build . -- -j3
+  - ctest -V
+
+notifications:
+  email: false
